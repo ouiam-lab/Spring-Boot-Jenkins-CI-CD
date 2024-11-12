@@ -18,6 +18,11 @@ pipeline {
                 git branch: 'main', changelog: false, poll: false, url: 'https://github.com/AbderrahmaneOd/Spring-Boot-Jenkins-CI-CD'
             }
         }
+          stage('Clean & Package') {
+            steps {
+                bat "mvn clean package -DskipTests"
+            }
+        }
 
         stage('SonarQube Analysis') {
             steps {
@@ -29,11 +34,7 @@ pipeline {
             }
         }
 
-        stage('Clean & Package') {
-            steps {
-                bat "mvn clean package -DskipTests"
-            }
-        }
+      
 
         stage('Docker Build & Push') {
             steps {
