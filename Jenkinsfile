@@ -19,7 +19,7 @@ pipeline {
             steps {
                 bat ''' mvn sonar:sonar \
                     -Dsonar.host.url=http://localhost:9000/ \
-                    -Dsonar.login=squ_9bd7c664e4941bd4e7670a88ed93d68af40b42a3 '''
+                    -Dsonar.login=squ_b19338fc39680b9c356a743decb50627e2b401a7 '''
             }
         }
 
