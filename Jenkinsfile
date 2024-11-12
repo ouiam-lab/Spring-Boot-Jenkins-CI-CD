@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools{
-        jdk 'jdk17'
+        JAVA_HOME = 'C:\Program Files\Java\jdk-17'
         maven 'maven3'
     }
 
