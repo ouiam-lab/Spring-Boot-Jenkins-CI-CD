@@ -31,10 +31,10 @@ stage('Docker Build & Push') {
                         def latestTag = "${DOCKER_IMAGE_NAME}:latest"
                         
                         bat "docker build -t ${DOCKER_IMAGE_NAME} -f Dockerfile.final ."
-                        bat "docker tag ${DOCKER_IMAGE_NAME} abdeod/${buildTag}"
-                        bat "docker tag ${DOCKER_IMAGE_NAME} abdeod/${latestTag}"
-                        bat "docker push abdeod/${buildTag}"
-                        bat "docker push abdeod/${latestTag}"
+                        bat "docker tag ${DOCKER_IMAGE_NAME} ouiaml/${buildTag}"
+                        bat "docker tag ${DOCKER_IMAGE_NAME} ouiaml/${latestTag}"
+                        bat "docker push ouiaml/${buildTag}"
+                        bat "docker push ouiaml/${latestTag}"
                         env.BUILD_TAG = buildTag
                     }
                 }
