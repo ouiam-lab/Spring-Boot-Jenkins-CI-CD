@@ -56,7 +56,7 @@ stage('Docker Build & Push') {
 
         stage('Vulnerability Scanning') {
             steps {
-                bat "trivy image abdeod/${env.BUILD_TAG}"
+                bat "trivy image ouiaml/${env.BUILD_TAG}"
             }
         }
 
