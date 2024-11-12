@@ -1,9 +1,14 @@
 pipeline {
     agent any
 
-    tools{
+    tools {
         jdk 'jdk17'
         maven 'maven3'
+    }
+
+    environment {
+        SONAR_HOST_URL = 'http://localhost:9000' // Update if SonarQube is hosted elsewhere
+        SONAR_TOKEN = 'squ_07f2dc1e2bb071dd862d9337e36eb01814c4d722' // Directly setting the token here
     }
 
     stages {
@@ -13,53 +18,49 @@ pipeline {
             }
         }
         
-        
-
-        stage('Sonarqube Analysis') {
+        stage('SonarQube Analysis') {
             steps {
-                bat ''' mvn sonar:sonar \
-                    -Dsonar.host.url=http://localhost:9000/ \
-                    mvn sonar:sonar -Dsonar.host.url=http://127.0.0.1:9000 -Dsonar.login=squ_b19338fc39680b9c356a743decb50627e2b401a7
- '''
+                bat """
+                    mvn clean sonar:sonar ^
+                    -Dsonar.host.url=${SONAR_HOST_URL} ^
+                    -Dsonar.login=${SONAR_TOKEN}
+                """
             }
         }
 
-        stage('Clean & Package'){
-            steps{
+        stage('Clean & Package') {
+            steps {
                 bat "mvn clean package -DskipTests"
             }
         }
 
-
-        
-       stage("Docker Build & Push"){
-            steps{
-                script{
+        stage("Docker Build & Push") {
+            steps {
+                script {
                     withDockerRegistry(credentialsId: 'DockerHub-Token', toolName: 'docker') {
                         def imageName = "spring-boot-prof-management"
                         def buildTag = "${imageName}:${BUILD_NUMBER}"
-                        def latestTag = "${imageName}:latest"  // Define latest tag
-                        
+                        def latestTag = "${imageName}:latest"
+
                         bat "docker build -t ${imageName} -f Dockerfile.final ."
                         bat "docker tag ${imageName} abdeod/${buildTag}"
-                        bat "docker tag ${imageName} abdeod/${latestTag}"  // Tag with latest
+                        bat "docker tag ${imageName} abdeod/${latestTag}"
                         bat "docker push abdeod/${buildTag}"
-                        bat "docker push abdeod/${latestTag}"  // Push latest tag
+                        bat "docker push abdeod/${latestTag}"
                         env.BUILD_TAG = buildTag
                     }
-                        
                 }
             }
         }
-        
-        stage('Vulnerability scanning'){
-            steps{
-                bat " trivy image abdeod/${buildTag}"
+
+        stage('Vulnerability Scanning') {
+            steps {
+                bat "trivy image abdeod/${BUILD_TAG}"
             }
         }
 
-        stage("Staging"){
-            steps{
+        stage("Staging") {
+            steps {
                 bat 'docker-compose up -d'
             }
         }
