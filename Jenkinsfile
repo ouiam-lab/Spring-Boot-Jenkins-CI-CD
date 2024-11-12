@@ -23,20 +23,7 @@ pipeline {
                 bat "mvn clean package -DskipTests"
             }
         }
-
-        stage('SonarQube Analysis') {
-            steps {
-                bat """
-                mvn clean sonar:sonar ^
-                  -Dsonar.host.url=${SONAR_HOST_URL} ^
-                  -Dsonar.login=${SONAR_TOKEN}
-                """
-            }
-        }
-
-      
-
-        stage('Docker Build & Push') {
+stage('Docker Build & Push') {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'DockerHub-Token', toolName: 'docker') {
@@ -53,6 +40,19 @@ pipeline {
                 }
             }
         }
+        stage('SonarQube Analysis') {
+            steps {
+                bat """
+                mvn clean sonar:sonar ^
+                  -Dsonar.host.url=${SONAR_HOST_URL} ^
+                  -Dsonar.login=${SONAR_TOKEN}
+                """
+            }
+        }
+
+      
+
+        
 
         stage('Vulnerability Scanning') {
             steps {
