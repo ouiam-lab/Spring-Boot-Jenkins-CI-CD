@@ -26,7 +26,7 @@ pipeline {
 stage('Docker Build & Push') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'DockerHub-Token', toolName: 'docker') {
+                    withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
                         def buildTag = "${DOCKER_IMAGE_NAME}:${BUILD_NUMBER}"
                         def latestTag = "${DOCKER_IMAGE_NAME}:latest"
                         
