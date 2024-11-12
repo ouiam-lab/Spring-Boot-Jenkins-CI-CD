@@ -17,7 +17,7 @@ pipeline {
 
         stage('Sonarqube Analysis') {
             steps {
-                sh ''' mvn sonar:sonar \
+                bat ''' mvn sonar:sonar \
                     -Dsonar.host.url=http://localhost:9000/ \
                     -Dsonar.login=squ_9bd7c664e4941bd4e7670a88ed93d68af40b42a3 '''
             }
@@ -25,7 +25,7 @@ pipeline {
 
         stage('Clean & Package'){
             steps{
-                sh "mvn clean package -DskipTests"
+                bat "mvn clean package -DskipTests"
             }
         }
 
@@ -39,11 +39,11 @@ pipeline {
                         def buildTag = "${imageName}:${BUILD_NUMBER}"
                         def latestTag = "${imageName}:latest"  // Define latest tag
                         
-                        sh "docker build -t ${imageName} -f Dockerfile.final ."
-                        sh "docker tag ${imageName} abdeod/${buildTag}"
-                        sh "docker tag ${imageName} abdeod/${latestTag}"  // Tag with latest
-                        sh "docker push abdeod/${buildTag}"
-                        sh "docker push abdeod/${latestTag}"  // Push latest tag
+                        bat "docker build -t ${imageName} -f Dockerfile.final ."
+                        bat "docker tag ${imageName} abdeod/${buildTag}"
+                        bat "docker tag ${imageName} abdeod/${latestTag}"  // Tag with latest
+                        bat "docker push abdeod/${buildTag}"
+                        bat "docker push abdeod/${latestTag}"  // Push latest tag
                         env.BUILD_TAG = buildTag
                     }
                         
@@ -53,13 +53,13 @@ pipeline {
         
         stage('Vulnerability scanning'){
             steps{
-                sh " trivy image abdeod/${buildTag}"
+                bat " trivy image abdeod/${buildTag}"
             }
         }
 
         stage("Staging"){
             steps{
-                sh 'docker-compose up -d'
+                bat 'docker-compose up -d'
             }
         }
     }
